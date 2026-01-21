@@ -171,6 +171,19 @@ const App: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Handle URL Pathname Routing
+  useEffect(() => {
+    const path = window.location.pathname.toLowerCase();
+    if (path === '/privacy') {
+      setView('privacy');
+    } else if (path === '/terms') {
+      setView('terms');
+    } else if (path === '/dashboard') {
+      setView('dashboard');
+    }
+  }, []);
+
+
 
 
   const fetchProfile = async (userId: string) => {
@@ -964,37 +977,8 @@ const App: React.FC = () => {
             </div>
 
             <div className="lg:col-span-12 xl:col-span-4 flex flex-col gap-6" style={{ display: view === 'dashboard' ? 'flex' : 'none' }}>
-              <div className={`rounded-[3rem] border-2 flex flex-col flex-1 overflow-hidden min-h-0 ${isDarkMode ? 'bg-slate-900/40 border-slate-800/50' : 'bg-white border-slate-100 shadow-sm'}`}>
-                <div className="p-8 border-b border-white/5 flex items-center justify-between font-black uppercase tracking-tighter shrink-0">
-                  <h3>Session History</h3>
-                  <span className="bg-indigo-500/10 text-indigo-500 px-3 py-1 rounded-lg text-xs">{history.length}</span>
-                </div>
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                  {history.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center p-8 opacity-50 space-y-4">
-                      <History className="w-12 h-12" />
-                      <p className="font-bold">No active gists.</p>
-                    </div>
-                  ) : (
-                    history.map((item) => (
-                      <div key={item.id} onClick={() => {
-                        setSelectedHistoryItem(item);
-                        setInputText(item.input);
-                        setOutputText(item.output);
-                        setChatMessages([]);
-                      }} className={`p-6 rounded-[2rem] border transition-all cursor-pointer group ${isDarkMode ? 'bg-slate-950/40 border-slate-800/50 hover:border-indigo-500/50' : 'bg-slate-50 border-slate-100 hover:border-indigo-200'}`}>
-                        <div className="flex items-center justify-between mb-3 text-[10px] font-black uppercase tracking-[0.2em]">
-                          <span className="text-slate-500">{new Date(item.timestamp).toLocaleTimeString()}</span>
-                        </div>
-                        <p className="text-sm font-bold line-clamp-2 mb-2 group-hover:text-indigo-400 transition-colors">{item.input}</p>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-
-              {userTier === 'Enterprise' && outputText && (
-                <div className={`rounded-[3rem] p-8 border-2 flex flex-col flex-1 overflow-hidden min-h-0 ${isDarkMode ? 'bg-slate-900/60 border-indigo-500/20 shadow-[0_0_50px_rgba(99,102,241,0.1)]' : 'bg-white border-slate-100 shadow-xl'}`}>
+              {(userTier === 'Enterprise' || userTier === 'Pro') && outputText && (
+                <div className={`rounded-[3rem] p-8 border-2 flex flex-col flex-1 overflow-hidden min-h-[400px] ${isDarkMode ? 'bg-slate-900/60 border-indigo-500/20 shadow-[0_0_50px_rgba(99,102,241,0.1)]' : 'bg-white border-slate-100 shadow-xl'}`}>
                   <div className="flex items-center gap-3 mb-6 shrink-0">
                     <Zap className="w-5 h-5 text-indigo-500" />
                     <h4 className="text-lg font-black uppercase tracking-tight">Deep Dive Chat</h4>
@@ -1046,21 +1030,16 @@ const App: React.FC = () => {
                 </div>
               )}
 
-            </div>
-          </div >
-        )}
-
-        {
-          dashboardView === 'history' && (
-            <div className="max-w-5xl flex flex-col gap-10">
-              <div className="flex-1">
-                <h3 className="text-2xl font-black mb-8">Your History</h3>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className={`rounded-[3rem] border-2 flex flex-col flex-1 overflow-hidden min-h-0 ${isDarkMode ? 'bg-slate-900/40 border-slate-800/50' : 'bg-white border-slate-100 shadow-sm'}`}>
+                <div className="p-8 border-b border-white/5 flex items-center justify-between font-black uppercase tracking-tighter shrink-0">
+                  <h3>Session History</h3>
+                  <span className="bg-indigo-500/10 text-indigo-500 px-3 py-1 rounded-lg text-xs">{history.length}</span>
+                </div>
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                   {history.length === 0 ? (
-                    <div className={`col-span-full p-12 rounded-3xl border-2 text-center ${isDarkMode ? 'bg-slate-900/40 border-slate-800' : 'bg-slate-50 border-slate-100'}`}>
-                      <History className="w-16 h-16 mx-auto mb-4 opacity-30" />
-                      <p className="text-lg font-bold opacity-50">No history yet. Start simplifying to see your past work here!</p>
-                      <p className="text-sm opacity-30 mt-2">History is saved locally in your browser</p>
+                    <div className="h-full flex flex-col items-center justify-center text-center p-8 opacity-50 space-y-4">
+                      <History className="w-12 h-12" />
+                      <p className="font-bold">No active gists.</p>
                     </div>
                   ) : (
                     history.map((item) => (
@@ -1069,95 +1048,156 @@ const App: React.FC = () => {
                         setInputText(item.input);
                         setOutputText(item.output);
                         setChatMessages([]);
-                      }} className={`p-6 rounded-3xl border-2 cursor-pointer ${isDarkMode ? 'bg-slate-900/40 border-slate-800 hover:border-indigo-500/50' : 'bg-white border-slate-100 hover:border-indigo-200'} transition-all group`}>
-                        <div className="flex items-center justify-between mb-4">
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-40">{new Date(item.timestamp).toLocaleDateString()}</span>
-                          <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <ArrowRight className="w-4 h-4" />
-                          </div>
+                      }} className={`p-6 rounded-[2rem] border transition-all cursor-pointer group ${isDarkMode ? 'bg-slate-950/40 border-slate-800/50 hover:border-indigo-500/50' : 'bg-slate-50 border-slate-100 hover:border-indigo-200'}`}>
+                        <div className="flex items-center justify-between mb-3 text-[10px] font-black uppercase tracking-[0.2em]">
+                          <span className="text-slate-500">{new Date(item.timestamp).toLocaleTimeString()}</span>
                         </div>
-                        <p className="text-sm font-bold line-clamp-3 opacity-80 leading-relaxed">{item.input}</p>
+                        <p className="text-sm font-bold line-clamp-2 mb-2 group-hover:text-indigo-400 transition-colors">{item.input}</p>
                       </div>
                     ))
                   )}
                 </div>
               </div>
+            </div>
+          </div >
+        )}
 
-              {userTier === 'Enterprise' && outputText && (
-                <div className={`rounded-[3rem] p-10 border-2 flex flex-col overflow-hidden min-h-[500px] ${isDarkMode ? 'bg-slate-900/60 border-indigo-500/20 shadow-[0_0_50px_rgba(99,102,241,0.1)]' : 'bg-white border-slate-100 shadow-xl'}`}>
-                  <div className="flex items-center justify-between mb-8 shrink-0">
-                    <div className="flex items-center gap-3">
-                      <Zap className="w-6 h-6 text-indigo-500" />
-                      <h4 className="text-2xl font-black uppercase tracking-tight">Active Gist Analysis</h4>
-                    </div>
-                    {selectedHistoryItem && (
-                      <div className="bg-indigo-500/10 text-indigo-500 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest">
-                        Selected: {new Date(selectedHistoryItem.timestamp).toLocaleTimeString()}
+        {
+          dashboardView === 'history' && (
+            <div className="space-y-8">
+              {!selectedHistoryItem ? (
+                <div className={`transition-all duration-500 ${userTier === 'Enterprise' ? 'max-w-none' : 'max-w-5xl'}`}>
+                  <h3 className="text-2xl font-black mb-8 flex items-center gap-3">
+                    <History className="w-8 h-8 text-indigo-500" />
+                    Your History
+                  </h3>
+                  <div className={`grid gap-6 ${userTier === 'Enterprise' ? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'}`}>
+                    {history.length === 0 ? (
+                      <div className={`col-span-full p-12 rounded-3xl border-2 text-center ${isDarkMode ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-100 shadow-sm'}`}>
+                        <History className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                        <p className="text-lg font-bold opacity-50">No history yet. Start simplifying to see your past work here!</p>
+                        <p className="text-sm opacity-30 mt-2">History is saved locally in your browser</p>
                       </div>
+                    ) : (
+                      history.map((item) => (
+                        <div key={item.id} onClick={() => {
+                          setSelectedHistoryItem(item);
+                          setInputText(item.input);
+                          setOutputText(item.output);
+                          setChatMessages([]);
+                        }} className={`p-6 rounded-3xl border-2 cursor-pointer ${isDarkMode ? 'bg-slate-900/40 border-slate-800 hover:border-indigo-500/50' : 'bg-white border-slate-100 hover:border-indigo-200'} transition-all group relative overflow-hidden`}>
+                          <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <div className="flex items-center justify-between mb-4">
+                            <span className="text-[10px] font-black uppercase tracking-widest opacity-40">{new Date(item.timestamp).toLocaleDateString()}</span>
+                            <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <ArrowRight className="w-4 h-4" />
+                            </div>
+                          </div>
+                          <p className="text-sm font-bold line-clamp-3 opacity-80 leading-relaxed">{item.input}</p>
+                        </div>
+                      ))
                     )}
                   </div>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <header className="flex items-center justify-between mb-2">
+                    <button
+                      onClick={() => setSelectedHistoryItem(null)}
+                      className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black uppercase tracking-tight text-xs border-2 transition-all ${isDarkMode ? 'bg-slate-900/40 border-slate-800 hover:border-indigo-500/50' : 'bg-white border-slate-100 hover:border-indigo-200'}`}
+                    >
+                      <ArrowRight className="w-4 h-4 rotate-180" />
+                      Back to History
+                    </button>
+                    <div className="text-right">
+                      <div className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-1">Created on</div>
+                      <div className="text-sm font-bold">{new Date(selectedHistoryItem.timestamp).toLocaleString()}</div>
+                    </div>
+                  </header>
 
-                  <div className="grid lg:grid-cols-2 gap-10 flex-1 min-h-0">
-                    <div className="flex flex-col min-h-0">
-                      <div className="flex-1 space-y-4 mb-6 overflow-y-auto pr-2 custom-scrollbar">
-                        {chatMessages.length === 0 && (
-                          <div className="h-full flex flex-col items-center justify-center text-center opacity-30 italic">
-                            <Sparkles className="w-8 h-8 mb-4" />
-                            <p>Ask follow-up questions about this historical gist.</p>
-                          </div>
-                        )}
-                        {chatMessages.map((msg, idx) => (
-                          <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`max-w-[90%] p-5 rounded-3xl ${msg.role === 'user' ? 'bg-indigo-600 text-white shadow-md' : isDarkMode ? 'bg-white/5 border border-white/10' : 'bg-slate-100 text-slate-900'}`}>
-                              <p className="text-sm leading-relaxed">{msg.content}</p>
-                            </div>
-                          </div>
-                        ))}
-                        {isThinking && (
-                          <div className="flex justify-start">
-                            <div className={`p-5 rounded-3xl flex items-center gap-3 ${isDarkMode ? 'bg-white/5' : 'bg-slate-50'}`}>
-                              <div className="flex gap-1">
-                                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce"></span>
-                                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.4s]"></span>
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                  <div className="grid lg:grid-cols-12 gap-8 items-start">
+                    {/* Left: Content Reader */}
+                    <div className={`${(userTier === 'Enterprise' || userTier === 'Pro') ? 'lg:col-span-8' : 'lg:col-span-12'} rounded-[3rem] border-2 overflow-hidden flex flex-col ${isDarkMode ? 'bg-slate-950/40 border-slate-800' : 'bg-white border-slate-100 shadow-sm'}`}>
+                      <div className="p-8 border-b border-indigo-500/10 flex items-center justify-between bg-indigo-500/5">
+                        <div className="flex items-center gap-3">
+                          <FileText className="w-6 h-6 text-indigo-500" />
+                          <h3 className="text-xl font-black uppercase tracking-tight">Simplified Gist</h3>
+                        </div>
                       </div>
-
-                      <div className="flex gap-3 shrink-0">
-                        <input
-                          type="text"
-                          value={chatInput}
-                          onChange={(e) => setChatInput(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleChatSubmit()}
-                          placeholder="Ask questions about this specific history item..."
-                          className={`flex-1 px-6 py-5 rounded-2xl border-2 outline-none transition-all ${isDarkMode ? 'bg-slate-950 border-slate-800 focus:border-indigo-500' : 'bg-slate-50 border-slate-200 focus:border-indigo-500'}`}
-                        />
-                        <button
-                          onClick={handleChatSubmit}
-                          disabled={isThinking || !chatInput.trim()}
-                          className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 rounded-2xl shadow-lg transition-all active:scale-95 disabled:opacity-50"
-                        >
-                          <ArrowRight className="w-6 h-6" />
-                        </button>
+                      <div className="p-10 overflow-y-auto custom-scrollbar h-[calc(100vh-320px)] min-h-[500px]">
+                        <div className="prose prose-indigo max-w-none dark:prose-invert">
+                          {renderOutput(selectedHistoryItem.output)}
+                        </div>
                       </div>
                     </div>
 
-                    <div className={`p-8 rounded-[2rem] overflow-y-auto custom-scrollbar border-2 ${isDarkMode ? 'bg-indigo-500/5 border-indigo-500/20' : 'bg-indigo-50/50 border-indigo-100'}`}>
-                      <div className="flex items-center gap-2 mb-4 text-indigo-500 font-black text-xs uppercase tracking-widest">
-                        <FileText className="w-4 h-4" /> Current Output Context
+                    {/* Right: Gist Analysis Chat */}
+                    {(userTier === 'Enterprise' || userTier === 'Pro') && (
+                      <div className="lg:col-span-4 lg:sticky lg:top-8">
+                        <div className={`rounded-[3rem] p-8 border-2 flex flex-col overflow-hidden h-[calc(100vh-120px)] min-h-[600px] ${isDarkMode ? 'bg-slate-900/60 border-indigo-500/20 shadow-[0_0_50px_rgba(99,102,241,0.1)]' : 'bg-white border-slate-100 shadow-xl'}`}>
+                          <div className="flex flex-col gap-4 mb-8 shrink-0">
+                            <div className="flex items-center gap-3">
+                              <Zap className="w-6 h-6 text-indigo-500" />
+                              <h4 className="text-xl font-black uppercase tracking-tight">Gist Analysis</h4>
+                            </div>
+                            <div className="bg-indigo-500/10 text-indigo-500 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest w-fit">
+                              Interactive Chat
+                            </div>
+                          </div>
+
+                          <div className="flex-1 flex flex-col min-h-0">
+                            <div className="flex-1 space-y-4 mb-6 overflow-y-auto pr-2 custom-scrollbar">
+                              {chatMessages.length === 0 && (
+                                <div className="h-full flex flex-col items-center justify-center text-center opacity-30 italic px-4">
+                                  <Sparkles className="w-8 h-8 mb-4" />
+                                  <p className="text-sm">Ask follow-up questions about this gist while you read.</p>
+                                </div>
+                              )}
+                              {chatMessages.map((msg, idx) => (
+                                <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                  <div className={`max-w-[90%] p-4 rounded-3xl ${msg.role === 'user' ? 'bg-indigo-600 text-white shadow-md' : isDarkMode ? 'bg-white/5 border border-white/10' : 'bg-slate-100 text-slate-900'}`}>
+                                    <p className="text-xs leading-relaxed">{msg.content}</p>
+                                  </div>
+                                </div>
+                              ))}
+                              {isThinking && (
+                                <div className="flex justify-start">
+                                  <div className={`p-4 rounded-3xl flex items-center gap-3 ${isDarkMode ? 'bg-white/5' : 'bg-slate-50'}`}>
+                                    <div className="flex gap-1">
+                                      <span className="w-1 h-1 bg-indigo-500 rounded-full animate-bounce"></span>
+                                      <span className="w-1 h-1 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                                      <span className="w-1 h-1 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex gap-2 shrink-0">
+                              <input
+                                type="text"
+                                value={chatInput}
+                                onChange={(e) => setChatInput(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleChatSubmit()}
+                                placeholder="Ask follow-up..."
+                                className={`flex-1 px-5 py-4 rounded-2xl border-2 outline-none transition-all text-sm ${isDarkMode ? 'bg-slate-950 border-slate-800 focus:border-indigo-500' : 'bg-slate-50 border-slate-200 focus:border-indigo-500'}`}
+                              />
+                              <button
+                                onClick={handleChatSubmit}
+                                disabled={isThinking || !chatInput.trim()}
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-2xl shadow-lg transition-all active:scale-95 disabled:opacity-50"
+                              >
+                                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="prose prose-indigo max-w-none">
-                        {renderOutput(outputText)}
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               )}
             </div>
-
           )
         }
 

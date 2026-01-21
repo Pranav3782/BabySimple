@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://gist.ai/sitemap.xml
+Sitemap: https://babysimple.entrext.in/sitemap.xml

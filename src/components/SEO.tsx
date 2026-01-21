@@ -8,12 +8,13 @@ interface SEOProps {
 }
 
 export const SEO = ({
-    title = "Gist - Everything is Simpler",
-    description = "Gist - The ultimate text manipulation and jargon simplification tool. Translate complex corporate and legal speak into everyday language instantly.",
-    canonical = "https://gist.ai/",
+    title = "babysimple - Everything is Simpler",
+    description = "babysimple - The ultimate text manipulation and jargon simplification tool. Translate complex corporate and legal speak into everyday language instantly.",
+    canonical = "https://babysimple.entrext.in/",
     noindex = false
 }: SEOProps) => {
-    const fullTitle = title.includes('Gist') ? title : `${title} | Gist`;
+    const fullTitle = title.includes('babysimple') ? title : `${title} | babysimple`;
+
 
     return (
         <Helmet>
@@ -26,14 +27,12 @@ export const SEO = ({
             <meta property="og:url" content={canonical} />
             <meta property="og:title" content={fullTitle} />
             <meta property="og:description" content={description} />
-            <meta property="og:image" content="https://gist.ai/og-image.jpg" /> {/* Placeholder, user to update */}
-
-            {/* Twitter */}
+            <meta property="og:image" content="https://babysimple.entrext.in/og-image.jpg" />
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:url" content={canonical} />
             <meta name="twitter:title" content={fullTitle} />
             <meta name="twitter:description" content={description} />
-            <meta name="twitter:image" content="https://gist.ai/og-image.jpg" />
+            <meta name="twitter:image" content="https://babysimple.entrext.in/og-image.jpg" />
 
             {noindex && <meta name="robots" content="noindex, nofollow" />}
             <html lang="en" />
