@@ -20,7 +20,7 @@ import { SEO } from './src/components/SEO';
 import { SchemaMarkup } from './src/components/Schema';
 
 const App: React.FC = () => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedNiche, setSelectedNiche] = useState<NicheType>('Legal');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [inputText, setInputText] = useState('');
