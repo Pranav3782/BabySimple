@@ -1,0 +1,33 @@
+{
+    "manifest_version": 3,
+    "name": "Gist: AI Jargon Simplified",
+    "version": "1.0.0",
+    "description": "Simplify technical jargon instantly using Gist AI.",
+    "permissions": [
+        "contextMenus",
+        "scripting",
+        "activeTab"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "css": [
+                "content.css"
+            ]
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html"
+    }
+}
